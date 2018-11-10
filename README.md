@@ -14,7 +14,7 @@ Yeah of course. For now I'd like to experiment with getting more information abo
 It's fairly easy to convert what I currently have into a asp.net site. I'd prefer to work on getting more data from the RPi shown.
 
 
-# How to install .Net core on the Raspberry Pi
+# How to install .Net core 2.1 on the Raspberry Pi
 Note that older Rpi's 1,2 and the Zero are not supported due to something not Microsoft related (related to the ARMv7 cpu).
 
 First run this
