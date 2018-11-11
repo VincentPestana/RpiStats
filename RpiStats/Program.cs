@@ -8,6 +8,8 @@ namespace RpiStats
     {
         private static DateTime _startingDateTime;
 
+        private static string _outputText;
+
         // Temp
         private static double _tempMin = 10000.0d;
         private static double _tempMax = 0.0d;
@@ -22,9 +24,8 @@ namespace RpiStats
             while (true)
             {
                 string temperature = GetTemperature();
-                TemperatureSetMinMax(temperature);
-                ScreenOutput(temperature);
-                ScreenOutput($"Temperature| Cur: {_tempAverage.ToString("#.0")} | Min: {_tempMin.ToString("#.0")} | Max: {_tempMax.ToString("#.0")}");
+                TemperatureOutput(temperature);
+                
                 
                 if (Console.KeyAvailable)
                 {
@@ -33,6 +34,35 @@ namespace RpiStats
                 
                 Thread.Sleep(900);
             }
+        }
+
+        private static void TemperatureOutput(string temperature)
+        {
+            TemperatureSetMinMax(temperature);
+            ScreenOutput($"Temperature| Min: {_tempMin.ToString("#.0")} | Cur: {_tempAverage.ToString("#.0")} | Max: {_tempMax.ToString("#.0")}");
+
+
+            var tempBarText = "*" + _tempAverage.ToString("#.0");
+            
+            //var tempBar = $"[{tempBarText.PadLeft((int)_tempAverage - (int)_tempMin)}{"".PadRight(Console.BufferWidth - 2 - (tempBarText.PadLeft((int)_tempAverage - (int)_tempMin).Length), ' ')}]";
+            //if (_tempMin == _tempMax)
+            //    _tempMax = _tempMin + 10;
+
+            //var oldMaxRange = (_tempMax - _tempMin);
+            //var newMaxRange = (Console.BufferWidth - 0);
+            //var padAmount = (((_tempAverage - _tempMin) * newMaxRange) / oldMaxRange) + 0;
+            //if (padAmount != 0)
+            //    padAmount -= 2;
+
+            //var tempBar = $"[{"*".PadLeft((int)padAmount)}{"".PadRight(Console.BufferWidth - ("*".PadLeft((int)padAmount)).Length-2)}]";
+            
+            // 2nd method
+            if (_tempAverage == _tempMin)
+                _tempMin = _tempAverage - 1;
+
+            var tempBar = $"[{"*".PadLeft((int)(_tempAverage - _tempMin))}{"".PadRight((int)(_tempMax - _tempAverage) == 0 ? 1 : (int)(_tempMax - _tempAverage))}]";
+
+            ScreenOutput(tempBar, true);
         }
 
         private static void TemperatureSetMinMax(string temperature)
@@ -47,8 +77,9 @@ namespace RpiStats
                     if (_tempAverage == 0.0)
                         _tempAverage = floatTemperature;
                     else
-                        _tempAverage = (_tempAverage + floatTemperature) / 2;
-                    
+                        _tempAverage = floatTemperature;
+                    //_tempAverage = (_tempAverage + floatTemperature) / 2;
+
 
                     if (_tempMin > floatTemperature)
                         _tempMin = floatTemperature;
@@ -70,33 +101,38 @@ namespace RpiStats
         private static string GetTemperature()
         {
             // bash command / opt / vc / bin / vcgencmd measure_temp
-            //var process = new Process()
-            //{
-            //    StartInfo = new ProcessStartInfo
-            //    {
-            //        FileName = "/bin/bash",
-            //        Arguments = $"-c \"/opt/vc/bin/vcgencmd measure_temp\"",
-            //        RedirectStandardOutput = true,
-            //        UseShellExecute = false,
-            //        CreateNoWindow = true,
-            //    }
-            //};
-            //process.Start();
-            //string result = process.StandardOutput.ReadToEnd();
-            //process.WaitForExit();
-            
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = $"-c \"/opt/vc/bin/vcgencmd measure_temp\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }
+            };
+            process.Start();
+            string result = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
             // TESTING
-            var result = new Random().Next(30, 70).ToString() + ".3'C";
+            //var result = new Random().Next(30, 70).ToString() + ".3'C";
 
             var temperature = result.Substring(result.IndexOf('=') + 1, result.IndexOf("'") - (result.IndexOf('=') + 1)).Replace('.', ',');
             return temperature;
         }
 
-        private static void ScreenOutput(string outputLine = "")
+        private static void ScreenOutput(string outputLine = "", bool appendLine = false)
         {
             ScreenHeader();
 
-            Console.WriteLine(outputLine);
+            if (appendLine)
+                _outputText += Environment.NewLine + outputLine;
+            else
+                _outputText = outputLine;
+            
+            Console.WriteLine(_outputText);
         }
 
         private static void ScreenHeader()
