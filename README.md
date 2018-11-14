@@ -1,26 +1,29 @@
 
-# Raspberry Pi Temperature report in C# .Net core 2.1
-Mainly written because I can write C# and have a Raspberry Pi.
+# Raspberry Pi Temperature report running on Raspbian in C# .Net core 2.1
+Mainly created because I can write C# and have a Raspberry Pi.
 
 ## Currently working features
 
  - Console screen refresh (looks more like a pro Linux command line app, even has a header).
- - Displays current GPU temperature
+ - Displays current, minimum and maximum temperature
+ - Temperature scale, showing min, max and current temp
 
 ## Plans for future?
-Yeah of course. For now I'd like to experiment with getting more information about the pi.
+Yeah of course. For now I'd like to experiment with getting more information about the Raspberry Pi.
 
 ### Asp.net on the Raspberry Pi
-It's fairly easy to convert what I currently have into a asp.net site. I'd prefer to work on getting more data from the RPi shown.
+It's fairly easy to convert what I currently have into a asp.net site. I'd prefer to work on getting more data from the Raspberry Pi.
 
 
-# How to install .Net core 2.1 on the Raspberry Pi
-Note that older Rpi's 1,2 and the Zero are not supported due to something not Microsoft related (related to the ARMv7 cpu).
+# How to install .Net core and Asp.Net 2.1 on the Raspberry Pi
+Note that older Rpi's 1,2 and the Zero are not supported due to something not Microsoft related (related to the ARMv7 cpu, they do not support instructions required by the JIT).
 
 First run this
 
     sudo apt-get -y update
     sudo apt-get -y install libunwind8 gettext
+
+First go to [Microsoft .Net downloads](https://www.microsoft.com/net/download) and find the correct version for your platform, Raspbian is based on Debian 9.
 
 Run the following commands to install .Net core 2.1.5
 
