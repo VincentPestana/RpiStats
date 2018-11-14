@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading;
 
@@ -91,6 +91,10 @@ namespace RpiStats
 
         private static float GetTemperature()
         {
+            var result = "";
+#if DEBUG
+            result = new Random().Next(30, 70).ToString() + ".3'C";
+#else
             // bash command / opt / vc / bin / vcgencmd measure_temp
             var process = new Process()
             {
@@ -107,8 +111,7 @@ namespace RpiStats
             string result = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
 
-            // TESTING
-            //var result = new Random().Next(30, 70).ToString() + ".3'C";
+#endif
 
             var temperatureResult = result.Substring(result.IndexOf('=') + 1, result.IndexOf("'") - (result.IndexOf('=') + 1)).Replace('.', ',');
             var temperature = 0.0f;
