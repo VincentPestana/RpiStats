@@ -36,5 +36,14 @@ Run the following commands to install ASP.Net Core
     wget [something]
     tar -xvf [something] -C /opt/dotnet/
     sudo ln -s /opt/dotnet/dotnet /usr/local/bin/
-    
 
+# Current look inside a terminal
+
+```
+Raspberry Pi Temperature Monitor     Hit any key to stop
+Started : 2018-11-14 08:27:07 PM || 2018-11-14 08:27:45 PM
+CPU load: 13:43:40 up 21 min,  2 users,  load average: 0.12, 0.07, 0.01
+=============================================================================
+Temperature| Min: 29,3 | Cur: 34,3 | Max: 68,3
+[    *                                  ]
+```
