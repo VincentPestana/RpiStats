@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading;
 
@@ -65,6 +65,69 @@ namespace RpiStats
             ScreenOutput(tempBar, true);
         }
 
+        private static void ScreenOutput(string outputLine = "", bool appendLine = false)
+        {
+            ScreenHeader();
+
+            if (appendLine)
+                _outputText += Environment.NewLine + outputLine;
+            else
+                _outputText = outputLine;
+            
+            Console.WriteLine(_outputText);
+        }
+
+        private static void ScreenHeader()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Raspberry Pi Temperature Monitor     Hit any key to stop");
+            Console.WriteLine("Started : " + _startingDateTime.ToString() + " || " + DateTime.Now.ToString());
+            Console.WriteLine("CPU load: " + GetProcessAverage());
+            Console.ResetColor();
+            for (int i = 0; i < Console.BufferWidth; i++)
+                Console.Write('=');
+        }
+
+        private static float GetTemperature()
+        {
+            var result = "";
+#if DEBUG
+            result = new Random().Next(30, 70).ToString() + ".3'C";
+#else
+            // bash command / opt / vc / bin / vcgencmd measure_temp
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = $"-c \"/opt/vc/bin/vcgencmd measure_temp\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }
+            };
+            process.Start();
+            result = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+#endif
+
+            var temperatureResult = result.Substring(result.IndexOf('=') + 1, result.IndexOf("'") - (result.IndexOf('=') + 1)).Replace('.', ',');
+            var temperature = 0.0f;
+            if (float.TryParse(temperatureResult, out temperature))
+                return temperature;
+            else
+                return 0.0f;
+        }
+
+        private float GetProcessAverage()
+        {
+            //top -b -n2 | grep "Cpu(s)" | awk '{print $2+$4 "%"}' | tail -n1
+            throw new NotImplementedException();
+
+        }
+
         private static void TemperatureSetMinMax(float temperature)
         {
             try
@@ -87,61 +150,6 @@ namespace RpiStats
                 ScreenOutput(ex.Message);
                 // TODO ScreenOutput with error which is displayed in header row
             }
-        }
-
-        private static float GetTemperature()
-        {
-            var result = "";
-#if DEBUG
-            result = new Random().Next(30, 70).ToString() + ".3'C";
-#else
-            // bash command / opt / vc / bin / vcgencmd measure_temp
-            var process = new Process()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "/bin/bash",
-                    Arguments = $"-c \"/opt/vc/bin/vcgencmd measure_temp\"",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                }
-            };
-            process.Start();
-            string result = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-
-#endif
-
-            var temperatureResult = result.Substring(result.IndexOf('=') + 1, result.IndexOf("'") - (result.IndexOf('=') + 1)).Replace('.', ',');
-            var temperature = 0.0f;
-            if (float.TryParse(temperatureResult, out temperature))
-                return temperature;
-            else
-                return 0.0f;
-        }
-
-        private static void ScreenOutput(string outputLine = "", bool appendLine = false)
-        {
-            ScreenHeader();
-
-            if (appendLine)
-                _outputText += Environment.NewLine + outputLine;
-            else
-                _outputText = outputLine;
-            
-            Console.WriteLine(_outputText);
-        }
-
-        private static void ScreenHeader()
-        {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("Raspberry Pi Temperature Monitor     Hit any key to stop");
-            Console.WriteLine("Started : " + _startingDateTime.ToString() + " || " + DateTime.Now.ToString());
-            Console.ResetColor();
-            for (int i = 0; i < Console.BufferWidth; i++)
-                Console.Write('=');
         }
     }
 }
