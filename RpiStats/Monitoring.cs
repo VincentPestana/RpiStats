@@ -12,7 +12,7 @@ namespace RpiStats
         private static double _tempMax = 0.0d;
         private static double _tempAverage;
 
-        public static float GetTemperature()
+        internal static float GetTemperature()
         {
             var result = "";
 #if DEBUG
@@ -44,14 +44,14 @@ namespace RpiStats
                 return 0.0f;
         }
 
-        public static string GetProcessAverage()
+        internal static string[] GetProcessAverage()
         {
             var result = "13:43:40 up 21 min,  2 users,  load average: 0.12, 0.07, 0.01";
 
 #if DEBUG
             var load = result.Substring(result.IndexOf("average: ") + 9);
-            var loadAverages = load.Split(',');
-            return load;
+            var debugLoadAverages = load.Split(',');
+            return debugLoadAverages;
 #endif
 
             // TODO: Command takes long to execute, maybe async it?
@@ -73,18 +73,18 @@ namespace RpiStats
             process.WaitForExit();
 
             // 13:43:40 up 21 min,  2 users,  load average: 0.12, 0.07, 0.01
-            result = processResult.Substring(processResult.IndexOf("average:" + 9));
+            var loadAverages = processResult.Substring(processResult.IndexOf("average:" + 9)).Split(',');
 
-            return result;
+            return loadAverages;
         }
 
-        public static string TemperatureOutput(float temperature)
+        internal static string TemperatureOutput(float temperature)
         {
             TemperatureSetMinMax(temperature);
             return $"Temperature| Min: {_tempMin.ToString("#.0")} | Cur: {_tempAverage.ToString("#.0")} | Max: {_tempMax.ToString("#.0")}";
         }
 
-        public static string TemperatureBarOutput()
+        internal static string TemperatureBarOutput()
         {
             var tempBarText = "*" + _tempAverage.ToString("#.0");
 
