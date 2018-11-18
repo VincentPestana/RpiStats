@@ -21,6 +21,7 @@ namespace RpiStats
                 var temperature = Monitoring.GetTemperature();
                 ScreenOutput(Monitoring.TemperatureOutput(temperature));
                 ScreenOutput(Monitoring.TemperatureBarOutput(), true);
+                ScreenOutput(Monitoring.GetOpenPorts(), true);
                 
                 
                 if (Console.KeyAvailable)

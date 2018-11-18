@@ -75,6 +75,56 @@ namespace RpiStats
 #endif
         }
 
+        internal static string GetOpenPorts()
+        {
+            // Cache results
+            if (_openPortsCalls < 10 && !string.IsNullOrEmpty(_openPortsCache))
+            {
+                _openPortsCalls++;
+                return _openPortsCache;
+            }
+
+#if DEBUG
+
+            var debugText = @"(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:5900            0.0.0.0:*               LISTEN      -
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+tcp6       0      0 :::5900                 :::*                    LISTEN      -
+tcp6       0      0 :::8081                 :::*                    LISTEN      -
+tcp6       0      0 :::22                   :::*                    LISTEN      -";
+            
+            _openPortsCache = debugText;
+
+#else
+            // Process stuff
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "/usr/bin/netstat",
+                    Arguments = "-tnlp",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }
+            };
+            process.Start();
+            var processResult = process.StandardOutput.ReadToEnd().Trim();
+            process.WaitForExit();
+
+            _openPortsCache = processResult;
+#endif
+            var tcpCons = _openPortsCache.Split("tcp ", 10000).Length;
+            var tcp6Cons = _openPortsCache.Split("tcp6", 10000).Length;
+
+            _openPortsCache = $"Open network ports \nTCP IPV4: {tcpCons} | TCP IPV6: {tcp6Cons}";
+            
+            return _openPortsCache;
+        }
+
         internal static string TemperatureOutput(float temperature)
         {
             TemperatureSetMinMax(temperature);
