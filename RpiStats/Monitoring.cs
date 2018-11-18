@@ -7,10 +7,11 @@ namespace RpiStats
 {
     static class Monitoring
     {
-        // Temp
         private static double _tempMin = 10000.0d;
         private static double _tempMax = 0.0d;
         private static double _tempAverage;
+        private static int _openPortsCalls = 0;
+        private static string _openPortsCache = "";
 
         internal static float GetTemperature()
         {
@@ -52,17 +53,12 @@ namespace RpiStats
             var load = result.Substring(result.IndexOf("average: ") + 9);
             var debugLoadAverages = load.Split(',');
             return debugLoadAverages;
-#endif
-
-            // TODO: Command takes long to execute, maybe async it?
-
-            // bash command top -b -n2 | grep "Cpu(s)" | awk '{print $2+$4 "%"}' | tail -n1
+#else
             var process = new Process()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "/bin/bash",
-                    Arguments = "uptime",
+                    FileName = "/usr/bin/uptime",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
@@ -73,15 +69,16 @@ namespace RpiStats
             process.WaitForExit();
 
             // 13:43:40 up 21 min,  2 users,  load average: 0.12, 0.07, 0.01
-            var loadAverages = processResult.Substring(processResult.IndexOf("average:" + 9)).Split(',');
+            var loadAverages = processResult.Substring(processResult.IndexOf("average: ") + 9).Split(',');
 
             return loadAverages;
+#endif
         }
 
         internal static string TemperatureOutput(float temperature)
         {
             TemperatureSetMinMax(temperature);
-            return $"Temperature| Min: {_tempMin.ToString("#.0")} | Cur: {_tempAverage.ToString("#.0")} | Max: {_tempMax.ToString("#.0")}";
+            return $"Temperature | Min: {_tempMin.ToString("#.0")} | Cur: {_tempAverage.ToString("#.0")} | Max: {_tempMax.ToString("#.0")}";
         }
 
         internal static string TemperatureBarOutput()
