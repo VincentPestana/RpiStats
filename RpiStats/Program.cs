@@ -121,11 +121,39 @@ namespace RpiStats
                 return 0.0f;
         }
 
-        private float GetProcessAverage()
+        private static string GetProcessAverage()
         {
-            //top -b -n2 | grep "Cpu(s)" | awk '{print $2+$4 "%"}' | tail -n1
-            throw new NotImplementedException();
+            var result = "13:43:40 up 21 min,  2 users,  load average: 0.12, 0.07, 0.01";
 
+#if DEBUG
+            var load = result.Substring(result.IndexOf("average: ")+9);
+            var loadAverages = load.Split(',');
+            return result;
+#endif
+
+            // TODO: Command takes long to execute, maybe async it?
+
+            // bash command top -b -n2 | grep "Cpu(s)" | awk '{print $2+$4 "%"}' | tail -n1
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = "uptime",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }
+            };
+            process.Start();
+            var processResult = process.StandardOutput.ReadToEnd().Trim();
+            process.WaitForExit();
+
+            // 13:43:40 up 21 min,  2 users,  load average: 0.12, 0.07, 0.01
+
+            
+
+            return result;
         }
 
         private static void TemperatureSetMinMax(float temperature)
