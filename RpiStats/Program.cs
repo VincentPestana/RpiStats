@@ -128,7 +128,7 @@ namespace RpiStats
 #if DEBUG
             var load = result.Substring(result.IndexOf("average: ")+9);
             var loadAverages = load.Split(',');
-            return result;
+            return load;
 #endif
 
             // TODO: Command takes long to execute, maybe async it?
@@ -150,7 +150,7 @@ namespace RpiStats
             process.WaitForExit();
 
             // 13:43:40 up 21 min,  2 users,  load average: 0.12, 0.07, 0.01
-
+            result = processResult.Substring(processResult.IndexOf("average:" + 9));
             
 
             return result;
