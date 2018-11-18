@@ -1,12 +1,13 @@
 
-# Raspberry Pi Temperature report running on Raspbian in C# .Net core 2.1
-Mainly created because I can write C# and have a Raspberry Pi.
+# Raspberry Pi Statistical information running on Raspbian in C# .Net core 2.1
+Mainly created because I can write C# and have a Raspberry Pi 3.
 
 ## Currently working features
 
  - Console screen refresh (looks more like a pro Linux command line app, even has a header).
  - Displays current, minimum and maximum temperature
  - Temperature scale, showing min, max and current temp
+ - Displays CPU load averages
 
 ## Plans for future?
 Yeah of course. For now I'd like to experiment with getting more information about the Raspberry Pi.
@@ -42,7 +43,8 @@ Run the following commands to install ASP.Net Core
 ```
 Raspberry Pi Temperature Monitor     Hit any key to stop
 Started : 2018-11-14 08:27:07 PM || 2018-11-14 08:27:45 PM
-CPU load: 13:43:40 up 21 min,  2 users,  load average: 0.12, 0.07, 0.01
+1m       5m      15m CPU Load Averages
+0.12     0.07    0.01
 =============================================================================
 Temperature| Min: 29,3 | Cur: 34,3 | Max: 68,3
 [    *                                  ]
