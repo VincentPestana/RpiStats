@@ -50,7 +50,7 @@ namespace RpiStats
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Raspberry Pi Temperature Monitor     Hit any key to stop");
             Console.WriteLine("Started : " + _startingDateTime.ToString() + " || " + DateTime.Now.ToString());
-            Console.WriteLine("5m\t 10m\t 15m CPU Load Averages");
+            Console.WriteLine("1m\t 5m\t 15m CPU Load Averages");
             Console.WriteLine(FormatHelper.FormatProcessAverages(Monitoring.GetProcessAverage()));
             Console.ResetColor();
             for (int i = 0; i < Console.BufferWidth; i++)
