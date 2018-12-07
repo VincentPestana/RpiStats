@@ -104,7 +104,7 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "/usr/bin/netstat",
+                    FileName = "netstat",
                     Arguments = "-tnlp",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
@@ -117,6 +117,7 @@ tcp6       0      0 :::22                   :::*                    LISTEN      
 
             _openPortsCache = processResult;
 #endif
+
             var tcpCons = _openPortsCache.Split("tcp ", 10000).Length;
             var tcp6Cons = _openPortsCache.Split("tcp6", 10000).Length;
 
