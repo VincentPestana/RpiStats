@@ -1,6 +1,7 @@
 
+
 # Raspberry Pi Statistical information running on Raspbian in C# .Net core 2.1
-Mainly created because I can write C# and have a Raspberry Pi 3.
+Mainly created as a guide to setting up .Net core on a Raspberry Pi, oh and because I can write C# and have a Raspberry Pi 3.
 
 ## Currently working features
 
@@ -29,14 +30,20 @@ First go to [Microsoft .Net downloads](https://www.microsoft.com/net/download) a
 Run the following commands to install .Net core 2.1.5
 
     wget https://download.visualstudio.microsoft.com/download/pr/4d555219-1f04-47c6-90e5-8b3ff8989b9c/0798763e6e4b98a62846116f997d046e/dotnet-runtime-2.1.5-linux-arm.tar.gz
+    mkdir /opt/dotnet/
     tar -xvf dotnet-runtime-2.1.5-linux-arm.tar.gz -C /opt/dotnet/
     sudo ln -s /opt/dotnet/dotnet /usr/local/bin/
 
 Run the following commands to install ASP.Net Core
 
-    wget [something]
-    tar -xvf [something] -C /opt/dotnet/
-    sudo ln -s /opt/dotnet/dotnet /usr/local/bin/
+    wget aspnetcore[something].tar.gz
+    tar -xvf aspnetcore[something].tar.gz -C /opt/dotnet/
+
+### Confirm .Net is installed
+
+The following command will show you exactly what is installed (.Net, ASP) and version numbers.
+
+    dotnet --info
 
 # Current look inside a terminal
 
