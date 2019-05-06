@@ -1,7 +1,7 @@
 
 
 # Raspberry Pi Statistical information running on Raspbian in C# .Net core 2.1
-Mainly created as a guide to setting up .Net core on a Raspberry Pi, oh and because I can write C# and have a Raspberry Pi 3.
+Mainly created as an excuse to write something in C# on the Raspberry Pi (Linux), thats not "Hello "
 
 ## Currently working features
 
@@ -49,10 +49,11 @@ The following command will show you exactly what is installed (.Net, ASP) and ve
 
 ```
 Raspberry Pi Temperature Monitor     Hit any key to stop
-Started : 2018-11-14 08:27:07 PM || 2018-11-14 08:27:45 PM
+Started : 2019/05/06 8:30:10 PM || 2019/05/06 8:30:14 PM
 1m       5m      15m CPU Load Averages
 0.12     0.07    0.01
 =============================================================================
 Temperature| Min: 29,3 | Cur: 34,3 | Max: 68,3
 [    *                                  ]
+Throttling: UnderVoltageDetected
 ```
