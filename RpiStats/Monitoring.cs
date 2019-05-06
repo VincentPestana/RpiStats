@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 
 namespace RpiStats
 {
@@ -45,6 +43,35 @@ namespace RpiStats
                 return 0.0f;
         }
 
+        internal static string GetThrottledState()
+        {
+            var result = "";
+#if DEBUG
+            result = "throttled=0x20002"; // Last number is the only one that matters
+#else
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = $"-c \"/opt/vc/bin/vcgencmd get_throttled\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                }
+            };
+            process.Start();
+            result = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+#endif
+            
+            result = result.Trim();
+            var resultCode = result[result.Length - 1];
+            
+            return resultCode.ToString();
+        }
+
         internal static string[] GetProcessAverage()
         {
             var result = "13:43:40 up 21 min,  2 users,  load average: 0.12, 0.07, 0.01";
@@ -75,56 +102,56 @@ namespace RpiStats
 #endif
         }
 
-        internal static string GetOpenPorts()
-        {
-            // Cache results
-            if (_openPortsCalls < 10 && !string.IsNullOrEmpty(_openPortsCache))
-            {
-                _openPortsCalls++;
-                return _openPortsCache;
-            }
+//        internal static string GetOpenPorts()
+//        {
+//            // Cache results
+//            if (_openPortsCalls < 10 && !string.IsNullOrEmpty(_openPortsCache))
+//            {
+//                _openPortsCalls++;
+//                return _openPortsCache;
+//            }
 
-#if DEBUG
+//#if DEBUG
 
-            var debugText = @"(Not all processes could be identified, non-owned process info
- will not be shown, you would have to be root to see it all.)
-Active Internet connections (only servers)
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        0      0 0.0.0.0:5900            0.0.0.0:*               LISTEN      -
-tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
-tcp6       0      0 :::5900                 :::*                    LISTEN      -
-tcp6       0      0 :::8081                 :::*                    LISTEN      -
-tcp6       0      0 :::22                   :::*                    LISTEN      -";
+//            var debugText = @"(Not all processes could be identified, non-owned process info
+// will not be shown, you would have to be root to see it all.)
+//Active Internet connections (only servers)
+//Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+//tcp        0      0 0.0.0.0:5900            0.0.0.0:*               LISTEN      -
+//tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+//tcp6       0      0 :::5900                 :::*                    LISTEN      -
+//tcp6       0      0 :::8081                 :::*                    LISTEN      -
+//tcp6       0      0 :::22                   :::*                    LISTEN      -";
             
-            _openPortsCache = debugText;
+//            _openPortsCache = debugText;
 
-#else
-            // Process stuff
-            var process = new Process()
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "netstat",
-                    Arguments = "-tnlp",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                }
-            };
-            process.Start();
-            var processResult = process.StandardOutput.ReadToEnd().Trim();
-            process.WaitForExit();
+//#else
+//            // Process stuff
+//            var process = new Process()
+//            {
+//                StartInfo = new ProcessStartInfo
+//                {
+//                    FileName = "netstat",
+//                    Arguments = "-tnlp",
+//                    RedirectStandardOutput = true,
+//                    UseShellExecute = false,
+//                    CreateNoWindow = true,
+//                }
+//            };
+//            process.Start();
+//            var processResult = process.StandardOutput.ReadToEnd().Trim();
+//            process.WaitForExit();
 
-            _openPortsCache = processResult;
-#endif
+//            _openPortsCache = processResult;
+//#endif
 
-            var tcpCons = _openPortsCache.Split("tcp ", 10000).Length;
-            var tcp6Cons = _openPortsCache.Split("tcp6", 10000).Length;
+//            var tcpCons = _openPortsCache.Split("tcp ", 10000).Length;
+//            var tcp6Cons = _openPortsCache.Split("tcp6", 10000).Length;
 
-            _openPortsCache = $"Open network ports \nTCP IPV4: {tcpCons} | TCP IPV6: {tcp6Cons}";
+//            _openPortsCache = $"Open network ports \nTCP IPV4: {tcpCons} | TCP IPV6: {tcp6Cons}";
             
-            return _openPortsCache;
-        }
+//            return _openPortsCache;
+//        }
 
         internal static string TemperatureOutput(float temperature)
         {
