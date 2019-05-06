@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace RpiStats
@@ -7,7 +6,6 @@ namespace RpiStats
     class Program
     {
         private static DateTime _startingDateTime;
-
         private static string _outputText;
 
         static void Main(string[] args)
@@ -21,9 +19,9 @@ namespace RpiStats
                 var temperature = Monitoring.GetTemperature();
                 ScreenOutput(Monitoring.TemperatureOutput(temperature));
                 ScreenOutput(Monitoring.TemperatureBarOutput(), true);
-                ScreenOutput(Monitoring.GetOpenPorts(), true);
-                
-                
+                //ScreenOutput(Monitoring.GetOpenPorts(), true);
+                ScreenOutput("Throttling: " + FormatHelper.FormatThrottledState(Monitoring.GetThrottledState()), true);
+
                 if (Console.KeyAvailable)
                 {
                     break;

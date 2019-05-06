@@ -1,4 +1,7 @@
-﻿namespace RpiStats
+﻿using RpiStats.Models;
+using System;
+
+namespace RpiStats
 {
     static class FormatHelper
     {
@@ -10,6 +13,13 @@
                 returnString += loadAverage + "\t";
             }
             return returnString;
+        }
+
+        internal static string FormatThrottledState(string throttledStateCallOutput)
+        {
+            var enumState = Enum.Parse<ThrottledState>(throttledStateCallOutput);
+
+            return enumState.ToString();
         }
     }
 }
